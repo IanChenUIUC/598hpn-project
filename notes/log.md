@@ -1,13 +1,19 @@
 ## October 12th, 2026
 
-Created a short-term dataset.
+Created two short-term datasets
 
-- have an experiment for writing to the dataset (and all the formats)
+- inputs: read-only (except for when its populated)
+- results: during the experiment, where all the logs/results go
 
 Repo organization
 
 - single monorepo with all experiments
-- different scripts for running each experiment
+- different scripts for running each experiment (`profile.py` gets an input parameter)
+- Apptainer image for (small-scale) local testing of scripts
+
+Scripts
+
+- populates the input dataset with `friendster` (downloaded from SNAP)
 
 ## October 3rd, 2026
 

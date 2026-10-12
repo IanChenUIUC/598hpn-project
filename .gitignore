@@ -1,4 +1,8 @@
+# ignore the portal API key
+cloudlab.jwt
+
 .quarto
+*.sif
 
 *.aux
 *.bbl

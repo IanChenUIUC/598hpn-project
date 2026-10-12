@@ -7,7 +7,16 @@ import click
 
 LIGRA = Path(__file__).resolve().parents[2] / "external" / "ligra"
 BUILD = Path(__file__).resolve().parent / "build" / "ligra"
-CXXFLAGS = ["-std=c++14", "-fopenmp", "-march=native", "-O3", "-DOPENMP", "-DBYTERLE"]
+CXXFLAGS = [
+    "-std=c++14",
+    "-fopenmp",
+    "-march=native",
+    "-O3",
+    "-DOPENMP",
+    "-DBYTERLE",
+    "-include",
+    "cstdint",
+]
 
 
 def execute(cmd: list[str]) -> int:

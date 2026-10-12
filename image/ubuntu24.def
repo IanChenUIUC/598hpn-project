@@ -1,0 +1,8 @@
+Bootstrap: docker
+From: ubuntu:24.04
+
+%files
+    setup-ubuntu24.sh /opt/setup-ubuntu24.sh
+
+%post
+    /opt/setup-ubuntu24.sh
