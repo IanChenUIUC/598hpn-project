@@ -6,7 +6,7 @@
 	url = https://github.com/IntelligentSoftwareSystems/Galois
 [submodule "proposal/sty"]
 	path = proposal/sty
-	url = github-illinois:IanChenUIUC/latex-styles.git
+	url = https://github.com/IanChenUIUC/latex-styles.git
 [submodule "external/libgrape-lite"]
 	path = external/libgrape-lite
 	url = https://github.com/alibaba/libgrape-lite
