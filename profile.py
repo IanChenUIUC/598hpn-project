@@ -6,14 +6,14 @@ RESULTS = "urn:publicid:IDN+emulab.net:ece509+stdataset+test-results"
 WRITERS = {"populate-friendster"}
 
 
-def mount_dataset(request, node, name: str, urn: str, path: str, readonly: bool) -> None:
+def mount_dataset(request, node, name, urn, path, readonly):
     iface = node.addInterface()
     store = request.RemoteBlockstore(name, path)
     store.dataset = urn
     if readonly:
         store.readonly = True
 
-    link = request.Link(f"{name}-link")
+    link = request.Link("%s-link" % name)
     link.addInterface(iface)
     link.addInterface(store.interface)
     link.best_effort = True
@@ -41,10 +41,10 @@ mount_dataset(request, node, "inputs", INPUTS, "/data", params.task not in WRITE
 mount_dataset(request, node, "results", RESULTS, "/results", False)
 
 if params.task != "none":
-    run = f"/results/$(date +%Y%m%dT%H%M%S)-{params.task}"
+    run = "/results/$(date +%%Y%%m%%dT%%H%%M%%S)-%s" % params.task
     command = (
-        f"run={run} && mountpoint -q /results && mkdir -p $run"
-        f" && /local/repository/scripts/{params.task}.sh $run > $run/log 2>&1"
+        "run=%s && mountpoint -q /results && mkdir -p $run"
+        " && /local/repository/scripts/%s.sh $run > $run/log 2>&1" % (run, params.task)
     )
     if params.terminate:
         command += "; python3 /local/repository/scripts/terminate-self.py >> $run/log 2>&1"
