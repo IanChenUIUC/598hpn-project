@@ -26,12 +26,13 @@ def execute(cmd: list[str]) -> int:
 
 @click.group()
 def main() -> None:
-    pass
+    """Build and run Ligra apps on a single node."""
 
 
 @main.command()
 @click.argument("app")
 def build(app: str) -> None:
+    """Compile external/ligra/apps/APP.C into build/ligra/APP."""
     BUILD.mkdir(parents=True, exist_ok=True)
     source = LIGRA / "apps" / f"{app}.C"
     cmd = ["g++", *CXXFLAGS, "-I", str(LIGRA / "ligra"), str(source), "-o", str(BUILD / app)]
@@ -42,6 +43,11 @@ def build(app: str) -> None:
 @click.argument("app")
 @click.argument("graph", type=click.Path(exists=True, dir_okay=False))
 def run(app: str, graph: str) -> None:
+    """Run APP on GRAPH, a symmetric graph in Ligra's adjacency format.
+
+    Ligra runs one untimed warm-up round, then prints a "Running time" line
+    for each of three timed rounds.
+    """
     binary = BUILD / app
     if not binary.exists():
         raise click.ClickException(f"{binary} not found; run `build {app}` first")

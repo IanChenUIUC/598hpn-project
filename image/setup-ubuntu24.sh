@@ -5,7 +5,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y \
     build-essential cmake git curl ca-certificates pkg-config \
-    libboost-all-dev llvm-dev libfmt-dev libnuma-dev \
+    libboost-all-dev llvm-dev libzstd-dev libfmt-dev libnuma-dev \
     openmpi-bin libopenmpi-dev \
     libucx-dev ucx-utils rdma-core ibverbs-utils perftest \
     libgflags-dev libgoogle-glog-dev \

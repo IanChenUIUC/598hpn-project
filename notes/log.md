@@ -14,6 +14,7 @@ Repo organization
 Scripts
 
 - populates the input dataset with `friendster` (downloaded from SNAP)
+- ligra, galois, and grape scripts
 
 ## October 3rd, 2026
 

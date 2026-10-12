@@ -3,6 +3,7 @@ cloudlab.jwt
 
 .quarto
 *.sif
+image/ubuntu24
 
 *.aux
 *.bbl
