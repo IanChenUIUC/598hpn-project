@@ -1,0 +1,12 @@
+[submodule "external/ligra"]
+	path = external/ligra
+	url = https://github.com/jshun/ligra
+[submodule "external/Galois"]
+	path = external/Galois
+	url = https://github.com/IntelligentSoftwareSystems/Galois
+[submodule "external/GraphScope"]
+	path = external/GraphScope
+	url = https://github.com/alibaba/GraphScope
+[submodule "proposal/sty"]
+	path = proposal/sty
+	url = github-illinois:IanChenUIUC/latex-styles.git

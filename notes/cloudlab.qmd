@@ -1,0 +1,130 @@
+---
+title: "On CloudLab"
+author: "Ian Chen"
+date: "Oct. 3, 2026"
+format:
+  typst:
+    mainfont: New Computer Modern
+    linkcolor: "#003B4F"
+    filecolor: "#003B4F"
+    citecolor: "#003B4F"
+execute: 
+  eval: false
+warning: false
+---
+
+We summarize the [docs](https://docs.cloudlab.us/basic-concepts.html).
+It also has two tutorials, using an OpenStack cloud or Chef respectively, which we do not say here.
+
+# Concepts
+
+## Profiles
+
+Performing an experiment requires specifying both the hardware resources and the software artifacts.
+
+### Resource Specification
+
+To do this, the [RSpec](https://docs.cloudlab.us/advanced-topics.html#%28part._rspecs%29) format is used.
+Nodes can be virtual machines or physical servers, and we need to specify the amount of RAM, cores, etc.
+
+### Software Artifacts
+
+(Disk) images, often contains an installation of a full operating system (for booting) in addition to other software.
+Alternatively, configuration can be included on a node by trasnferring during startup service hooks.
+
+## Experiments
+
+Profiles are instantiated into experiments that uses resources on CloudLab clusters.
+Disk state of an experiment is ephemeral (which loses the data once the experiment ends).
+Thus, [datasets](https://docs.cloudlab.us/advanced-storage.html) are useful.
+
+## Control Network
+
+While the *experiment network* is specified by the topology connecting nodes (as defined in the RSpec), the *control network* is internet accessible and so is useful on top of it.
+In general, the control network should only be used for [monitoring](https://docs.cloudlab.us/advanced-topics.html#(part._introspection)), or one-time setup/termination activities.
+
+# Resources
+
+## Reservations
+
+Resources can be reserved per-cluster per-type (tied to a project).
+This does not start an experiment, but only ensures they are available, and are given elastically (e.g. more may be available).
+
+## geni-lib
+
+[geni-lib](https://docs.cloudlab.us/geni-lib/index.html) is a tool for creating resource specification (RSpec) files.
+For example, to construct a profile with a single Xen VM, first we have our imports
+
+```{python}
+import geni.portal as portal
+import geni.rspec.pg as rspec
+```
+
+Where the **portal context** to create **requests** for us (and the corresponding RSpec).
+
+There are lots of default profiles, for example the [small-lan profile](https://www.cloudlab.us/show-profile.php?project=PortalProfiles&profile=small-lan).
+
+### Virtual Machines
+
+```{python}
+request = portal.context.makeRequestRSpec()
+node = request.XenVM("node")
+node.cores = 2
+node.ram = 2048 # 2 GB
+node.disk = 8 # 8GB additional space
+portal.context.printRequestRSpec()
+```
+
+Note that an alternative way of specifying additional storage is with a request for an ephemeral blockstore (aka a local dataset), e.g.
+
+```{python}
+bs = node.BlockStore("bs", "/mydata")
+bs.size = "8GB"
+bs.placement = "nonsysvol"
+```
+
+More details can be found at [https://docs.cloudlab.us/virtual-machines-advanced.html].
+
+### Physical Machines
+
+Another example, to get an ARM physical machine ([m400](zhttps://docs.cloudlab.us/hardware.html) is the hardware type for ARM) is as follows:
+
+```{python}
+request = portal.context.makeRequestRSpec()
+node = request.RawPC("node")
+node.hardware_type = "m400"
+portal.context.printRequestRSpec()
+```
+
+These nodes can be linked within a LAN
+
+```{python}
+node1 = request.XenVM("node1")
+node2 = request.XenVM("node2")
+link = request.Link(members = [node1, node2])
+```
+
+The last part that we will say here (more in the docs) is to install and execute services.
+A common use case is to fetch a tarball (and is installed after the disk image is loaded), before one of the scripts is executed.
+
+```{python}
+node.addService(rspec.Install(url="http://example.org/sample.tar.gz", path="/local"))
+node.addService(rspec.Execute(shell="bash", command="/local/example.sh"))
+```
+
+### Switches
+
+Configuring custom switches is also [possible](https://docs.cloudlab.us/advanced-topics.html#(part._user-controlled-switches)).
+
+## Storage
+
+Finally, more details about storage.
+
+### Image-Backed Datasets
+
+We can take a snapshot of a local dataset (see above) to a Disk Image, following [instructions](https://docs.cloudlab.us/advanced-storage.html#(part._storage-example-imdataset)).
+Thus, this is a way of persisting data and using it in future experiments.
+
+### Remote Datasets
+
+Alternatively, we can collect it from the network, following [instructions](https://docs.cloudlab.us/advanced-storage.html#%28part._storage-example-remote-nfs%29).

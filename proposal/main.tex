@@ -1,0 +1,70 @@
+\documentclass{article}
+
+\usepackage{sty/notes}
+\usepackage{sty/math}
+
+\title{CS 598 HPN Course Project Planning}
+\author{Ian Chen}
+\date{\today}
+
+\usepackage[backend=biber,style=numeric,defernumbers=true]{biblatex}
+\addbibresource{refs.bib}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+My recent research has been about writing scalable graph algorithms ($\sim 5$ billion edges) for a single (shared-memory) machine.
+However, these are limited by the memory and compute of a single machine.
+
+In this project, I will write a communication substrate that brings the shared-memory programming model to distributed graph processing.
+All operations are synchronous, with concurrent non-local memory reads handled via RDMA communication.
+
+\subsection{Background}
+
+In the shared memory case, the common programming model is to write graph algorithms as vertex or edge programs.
+For example, consider the case of counting the number of triangles in a graph, we might write the formula
+
+$$
+    \sum_{uv \in E} \abs{N(u) \cap N(v)}
+$$
+
+This naturally expresses itself in code as a program to execute over the edges of a graph; this model naturally describes many other graph algorithms, including connectivity, shortest paths, or $k$-core.
+However, synchronous algorithms for distributed graphs tend to be written the bulk-synchronous-parallel (BSP) model, which has a global barrier separating a communication phase before proceeding with local computation (as lots of small messages could make network communication the bottleneck)~\cite{dathathri2018gluon,steil2023embracing}.
+The BSP model requires global synchronization (which amplifies load imbalance) and requires significantly more memory usage (to buffer messages into epochs)~\cite{mohammadiporshokooh2026overcoming}.
+Moreover, some algorithms require many rounds, and these rounds can be heavily imbalanced in the work required, reducing performance.
+Algorithms for asynchronous communication models have also been studied, but are work inefficient as they typically have to run until a convergence condition.
+Both these alternatives requires a different algorithmic paradigm than is natural for a shared-memory machine, costing developer overhead.
+
+Recently, kernel-bypass networking reduces the overhead of small messages.
+As such, latency hiding has been proposed as an alternative~\cite{nelson2014grappa,mohammadiporshokooh2026overcoming}.
+Edge operations access remote data directly and synchronously; these operations are run concurrently to utilize CPU.
+
+\subsection{Evaluation}
+
+In this project, I plan to write a communication substrate allowing the same program to be performant on one machine or on a cluster.
+To minimize the latency, I plan to use LCI~\cite{yan2025lci} as a low-overhead RDMA communication layer.
+On top, concurrent lightweight tasks hide the remaining latency.
+
+The first experiment fixes the algorithm and graph and varies three conditions: the number of lightweight tasks per core, the network stack (LCI over RDMA, MPI, and TCP), and the number of machines.
+We hypothesize that over RDMA, a few dozen tasks per core suffice to hide remote-access latency, keeping the same program within a small factor of Gluon as machines are added, while over TCP it falls far behind.
+The second experiment fixes these conditions and varies the algorithm, comparing workloads where round-based algorithms converge slowly (connectivity on high-diameter graphs) against ones where rounds work well (PageRank).
+
+\section{Related work}
+
+Gluon~\cite{dathathri2018gluon} is a communication substrate that makes use of invariants of a static partitioned graph for optimizing communication.
+However, the programming API is for the BSP model, and as such, suffers from the issues discussed before (namely, latency and developer overhead).
+
+Recently, the NWGraph library has been combined with the HPX runtime system to reduce latency of distributed graph algorithms~\cite{mohammadiporshokooh2026overcoming}.
+It supports lightweight task-based parallelism at a machine to hide the remaining latency of HPX.
+Code must still be restructured to be aware of the placement of the data and place synchronization barriers.
+
+\section{Computing resources}
+
+CloudLab.
+
+\printbibliography
+
+\end{document}
