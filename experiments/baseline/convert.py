@@ -110,6 +110,21 @@ def galois(csr_: str, out: str) -> None:
 @main.command()
 @click.argument("csr_")
 @click.argument("out")
+def gbbs(csr_: str, out: str) -> None:
+    """Write OUT.bin from the CSR at prefix CSR_: GBBS's binary format, read with -b by
+    a build with -DGBBSLONG."""
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    indptr, indices = read_csr(csr_)
+    n, m = len(indptr) - 1, len(indices)
+    with open(f"{out}.bin", "wb") as f:
+        np.array([n, m, 0], dtype=np.int64).tofile(f)
+        indptr.tofile(f)
+        indices.tofile(f)
+
+
+@main.command()
+@click.argument("csr_")
+@click.argument("out")
 @click.option("-t", "--threads", type=int, default=1, help="Threads for writing OUT.e.")
 def grape(csr_: str, out: str, threads: int) -> None:
     """Write OUT.v, one vertex id per line, and OUT.e, each undirected edge once as

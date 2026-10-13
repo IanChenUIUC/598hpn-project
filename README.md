@@ -12,7 +12,7 @@
 │   ├── cloudlab.qmd
 │   └── log.md
 ├── profile.py
-├── proposal
+├── manuscript
 │   ├── main.tex
 │   ├── refs.bib
 │   └── sty

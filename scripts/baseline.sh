@@ -19,13 +19,17 @@ export LD_LIBRARY_PATH=$(uv run python -c "import pyarrow; print(pyarrow.get_lib
     free -g
 } > "$run/settings" 2>&1
 
-for system in ligra galois grape; do
+for system in ligra gbbs galois grape; do
     uv run $system.py build cc
 done
 
 uv run convert.py ligra "$graph" "$input"
 uv run ligra.py run cc "$input" > "$run/ligra.log" 2>&1
 rm "$input.config" "$input.adj" "$input.idx"
+
+uv run convert.py gbbs "$graph" "$input"
+uv run gbbs.py run cc "$input.bin" > "$run/gbbs.log" 2>&1
+rm "$input.bin"
 
 uv run convert.py galois "$graph" "$input"
 uv run galois.py run cc "$input.sgr" -n 1 -t "$threads" > "$run/galois-n1.log" 2>&1

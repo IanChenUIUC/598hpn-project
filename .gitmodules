@@ -4,8 +4,8 @@
 [submodule "external/Galois"]
 	path = external/Galois
 	url = https://github.com/IntelligentSoftwareSystems/Galois
-[submodule "proposal/sty"]
-	path = proposal/sty
+[submodule "manuscript/sty"]
+	path = manuscript/sty
 	url = https://github.com/IanChenUIUC/latex-styles.git
 [submodule "external/libgrape-lite"]
 	path = external/libgrape-lite
@@ -13,3 +13,9 @@
 [submodule "external/format-conversion"]
 	path = external/format-conversion
 	url = https://github.com/IanChenUIUC/format-conversion/
+[submodule "external/gbbs"]
+	path = external/gbbs
+	url = https://github.com/ParAlg/gbbs
+[submodule "external/parlaylib"]
+	path = external/parlaylib
+	url = https://github.com/ParAlg/parlaylib
