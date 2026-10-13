@@ -25,7 +25,8 @@ pc.defineParameter("image", "Disk image", portal.ParameterType.IMAGE,
                    "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD")
 pc.defineParameter("hardware", "Hardware type (empty for any)", portal.ParameterType.NODETYPE, "")
 pc.defineParameter("task", "Task to run at boot (none for interactive)",
-                   portal.ParameterType.STRING, "none")
+                   portal.ParameterType.STRING, "none",
+                   legalValues=["none", "populate-friendster", "baseline"])
 pc.defineParameter("terminate", "Terminate the experiment when the task finishes",
                    portal.ParameterType.BOOLEAN, False)
 params = pc.bindParameters()
