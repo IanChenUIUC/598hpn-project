@@ -4,7 +4,7 @@
 //   round <r> <seconds>      one line per timed round, after one untimed warm-up
 //   components <count>
 //
-// Usage: Components [-rounds R] <prefix>   (reads prefix.config/.adj/.idx)
+// Usage: cc [-rounds R] <prefix>   (reads prefix.config/.adj/.idx)
 //
 // Copyright (c) 2013 Julian Shun and Guy Blelloch
 //

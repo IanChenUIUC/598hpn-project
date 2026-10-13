@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 PORTAL_HTTP = "https://boss.emulab.net:43794"
-TOKEN = Path("/users/ianchen3/.cloudlab-token")
+TOKEN = Path("/proj/ECE509/ianchen3-cloudlabtoken.jwt")
 PROJECT = "ece509"
 CLI = ["uvx", "--from", "portal-api[cli] @ git+https://gitlab.flux.utah.edu/emulab/portal-api",
        "portal-cli"]

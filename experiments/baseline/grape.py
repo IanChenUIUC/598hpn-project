@@ -6,7 +6,7 @@ from pathlib import Path
 
 import click
 
-GRAPE = Path(__file__).resolve().parents[2] / "external" / "libgrape-lite"
+APPS = Path(__file__).resolve().parent / "apps" / "grape"
 BUILD = Path(__file__).resolve().parent / "build" / "grape"
 CMAKE_FLAGS = [
     "-DCMAKE_BUILD_TYPE=Release",
@@ -25,12 +25,14 @@ def main() -> None:
 
 
 @main.command()
-def build() -> None:
-    """Configure external/libgrape-lite and build run_app, which contains every app."""
-    code = execute(["cmake", "-S", str(GRAPE), "-B", str(BUILD), *CMAKE_FLAGS])
+@click.argument("app")
+def build(app: str) -> None:
+    """Configure apps/grape, which builds external/libgrape-lite, and build its CMake
+    target APP into build/grape/APP."""
+    code = execute(["cmake", "-S", str(APPS), "-B", str(BUILD), *CMAKE_FLAGS])
     if code:
         sys.exit(code)
-    sys.exit(execute(["cmake", "--build", str(BUILD), "--target", "analytical_apps", "--parallel"]))
+    sys.exit(execute(["cmake", "--build", str(BUILD), "--target", app, "--parallel"]))
 
 
 @main.command()
@@ -38,39 +40,30 @@ def build() -> None:
 @click.argument("graph")
 @click.option("-n", "--np", "np_", type=int, default=1, help="Number of MPI processes.")
 @click.option("-t", "--threads", type=int, default=1, help="Threads per process.")
-@click.option(
-    "-o",
-    "--out",
-    type=click.Path(file_okay=False),
-    help="Directory for per-fragment results; none if omitted.",
-)
-def run(app: str, graph: str, np_: int, threads: int, out: str | None) -> None:
-    """Run APP (e.g. wcc, pagerank) on GRAPH.v and GRAPH.e, LDBC-format vertex and edge files."""
-    vfile, efile = Path(f"{graph}.v"), Path(f"{graph}.e")
-    for path in (vfile, efile):
+@click.option("-r", "--rounds", type=int, default=3, help="Timed rounds after the warm-up.")
+def run(app: str, graph: str, np_: int, threads: int, rounds: int) -> None:
+    """Run APP on GRAPH.v and GRAPH.e, LDBC-format vertex and edge files, under mpirun.
+
+    APP prints load_s, then one untimed warm-up and a "round r seconds" line
+    per timed round, then its result, on worker 0.
+    """
+    for path in (Path(f"{graph}.v"), Path(f"{graph}.e")):
         if not path.is_file():
             raise click.ClickException(f"{path} not found")
-    binaries = [p for p in BUILD.rglob("run_app") if p.is_file()]
-    if len(binaries) != 1:
-        raise click.ClickException(
-            f"expected one run_app under {BUILD}, found {len(binaries)}; run `build` first"
-        )
+    binary = BUILD / app
+    if not binary.exists():
+        raise click.ClickException(f"{binary} not found; run `build {app}` first")
     cmd = [
         "mpirun",
         "-n",
         str(np_),
-        str(binaries[0]),
-        "--application",
-        app,
-        "--vfile",
-        str(vfile),
-        "--efile",
-        str(efile),
-        "--app_concurrency",
+        str(binary),
+        "--rounds",
+        str(rounds),
+        "--threads",
         str(threads),
+        graph,
     ]
-    if out:
-        cmd += ["--out_prefix", out]
     sys.exit(execute(cmd))
 
 

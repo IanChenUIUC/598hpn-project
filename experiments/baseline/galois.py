@@ -6,11 +6,10 @@ from pathlib import Path
 
 import click
 
-GALOIS = Path(__file__).resolve().parents[2] / "external" / "Galois"
+APPS = Path(__file__).resolve().parent / "apps" / "galois"
 BUILD = Path(__file__).resolve().parent / "build" / "galois"
 CMAKE_FLAGS = [
     "-DCMAKE_BUILD_TYPE=Release",
-    "-DGALOIS_ENABLE_DIST=ON",
 ]
 
 
@@ -28,8 +27,9 @@ def main() -> None:
 @main.command()
 @click.argument("app")
 def build(app: str) -> None:
-    """Configure external/Galois with distributed support and build the CMake target APP."""
-    code = execute(["cmake", "-S", str(GALOIS), "-B", str(BUILD), *CMAKE_FLAGS])
+    """Configure apps/galois, which builds external/Galois with distributed support, and
+    build its CMake target APP into build/galois/APP."""
+    code = execute(["cmake", "-S", str(APPS), "-B", str(BUILD), *CMAKE_FLAGS])
     if code:
         sys.exit(code)
     sys.exit(execute(["cmake", "--build", str(BUILD), "--target", app, "--parallel"]))
@@ -40,17 +40,28 @@ def build(app: str) -> None:
 @click.argument("graph", type=click.Path(exists=True, dir_okay=False))
 @click.option("-n", "--np", "np_", type=int, default=1, help="Number of MPI processes.")
 @click.option("-t", "--threads", type=int, default=1, help="Threads per process.")
-def run(app: str, graph: str, np_: int, threads: int) -> None:
+@click.option("-r", "--rounds", type=int, default=3, help="Timed rounds after the warm-up.")
+def run(app: str, graph: str, np_: int, threads: int, rounds: int) -> None:
     """Run APP on GRAPH, a symmetric graph in Galois's .gr format, under mpirun.
 
-    connected-components-push-dist prints "Number of components is N" on rank 0.
+    APP prints load_s, then one untimed warm-up and a "round r seconds" line
+    per timed round, then its result, on rank 0.
     """
-    binaries = [p for p in BUILD.rglob(app) if p.is_file()]
-    if len(binaries) != 1:
-        raise click.ClickException(
-            f"expected one {app} under {BUILD}, found {len(binaries)}; run `build {app}` first"
-        )
-    cmd = ["mpirun", "-n", str(np_), str(binaries[0]), graph, "-symmetricGraph", "-t", str(threads)]
+    binary = BUILD / app
+    if not binary.exists():
+        raise click.ClickException(f"{binary} not found; run `build {app}` first")
+    cmd = [
+        "mpirun",
+        "-n",
+        str(np_),
+        str(binary),
+        graph,
+        "-symmetricGraph",
+        "-t",
+        str(threads),
+        "-runs",
+        str(rounds),
+    ]
     sys.exit(execute(cmd, {"GALOIS_DO_NOT_BIND_THREADS": "1"}))
 
 

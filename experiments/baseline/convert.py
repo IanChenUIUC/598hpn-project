@@ -83,6 +83,7 @@ def csr(snap: str, out: str, threads: int) -> None:
 def ligra(csr_: str, out: str) -> None:
     """Write OUT.config, OUT.adj and OUT.idx from the CSR at prefix CSR_: Ligra's binary
     format, read with -b by a build with -DLONG."""
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
     indptr, indices = read_csr(csr_)
     Path(f"{out}.config").write_text(f"{len(indptr) - 1}\n")
     indices.tofile(f"{out}.adj")
@@ -95,6 +96,7 @@ def ligra(csr_: str, out: str) -> None:
 def galois(csr_: str, out: str) -> None:
     """Write OUT.sgr from the CSR at prefix CSR_: Galois's version 1 .gr format with no
     edge data."""
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
     indptr, indices = read_csr(csr_)
     n, m = len(indptr) - 1, len(indices)
     with open(f"{out}.sgr", "wb") as f:
@@ -111,6 +113,7 @@ def galois(csr_: str, out: str) -> None:
 def grape(csr_: str, out: str) -> None:
     """Write OUT.v, one vertex id per line, and OUT.e, each undirected edge once as
     "u v", from the CSR at prefix CSR_."""
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
     indptr = pq.read_table(f"{csr_}.indptr.parquet").column("indptr")
     np.savetxt(f"{out}.v", np.arange(len(indptr) - 1), fmt="%d")
     fmt.convert(
