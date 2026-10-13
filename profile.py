@@ -22,7 +22,9 @@ def mount_dataset(request, node, name, urn, path, readonly):
 
 pc = portal.context
 pc.defineParameter("image", "Disk image", portal.ParameterType.IMAGE,
-                   "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD")
+                   "urn:publicid:IDN+emulab.net+image+ECE509:experiments",
+                   legalValues=["urn:publicid:IDN+emulab.net+image+ECE509:experiments",
+                                "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"])
 pc.defineParameter("hardware", "Hardware type (empty for any)", portal.ParameterType.NODETYPE, "")
 pc.defineParameter("task", "Task to run at boot (none for interactive)",
                    portal.ParameterType.STRING, "none",
