@@ -41,13 +41,9 @@ mount_dataset(request, node, "inputs", INPUTS, "/data", params.task not in WRITE
 mount_dataset(request, node, "results", RESULTS, "/results", False)
 
 if params.task != "none":
-    run = "/results/$(date +%%Y%%m%%dT%%H%%M%%S)-%s" % params.task
-    command = (
-        "run=%s && mountpoint -q /results && mkdir -p $run"
-        " && /local/repository/scripts/%s.sh $run > $run/log 2>&1" % (run, params.task)
-    )
+    command = "sudo /local/repository/scripts/boot.sh %s" % params.task
     if params.terminate:
-        command += "; python3 /local/repository/scripts/terminate-self.py >> $run/log 2>&1"
+        command += "; python3 /local/repository/scripts/terminate-self.py"
     node.addService(pg.Execute(shell="bash", command=command))
 
 pc.printRequestRSpec(request)

@@ -19,6 +19,12 @@ def execute(cmd: list[str], env: dict[str, str] | None = None) -> int:
     return subprocess.run(cmd, env={**os.environ, **env}).returncode
 
 
+def mpirun(np_: int) -> list[str]:
+    if np_ == 1:
+        return ["mpirun", "-n", "1", "--bind-to", "none", "numactl", "-i", "all"]
+    return ["mpirun", "-n", str(np_), "--map-by", "socket", "--bind-to", "socket"]
+
+
 @click.group()
 def main() -> None:
     """Build and run libgrape-lite apps under Open MPI."""
@@ -46,6 +52,9 @@ def run(app: str, graph: str, np_: int, threads: int, rounds: int) -> None:
 
     APP prints load_s, then one untimed warm-up and a "round r seconds" line
     per timed round, then its result, on worker 0.
+
+    -n 1 runs one unbound rank with memory interleaved across sockets
+    (numactl -i all); larger -n binds one rank per socket.
     """
     for path in (Path(f"{graph}.v"), Path(f"{graph}.e")):
         if not path.is_file():
@@ -54,9 +63,7 @@ def run(app: str, graph: str, np_: int, threads: int, rounds: int) -> None:
     if not binary.exists():
         raise click.ClickException(f"{binary} not found; run `build {app}` first")
     cmd = [
-        "mpirun",
-        "-n",
-        str(np_),
+        *mpirun(np_),
         str(binary),
         "--rounds",
         str(rounds),

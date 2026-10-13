@@ -50,14 +50,15 @@ def run(app: str, graph: str, rounds: int) -> None:
     (GRAPH.config, GRAPH.adj, GRAPH.idx).
 
     APP prints load_s, then one untimed warm-up and a "round r seconds" line
-    per timed round, then its result.
+    per timed round, then its result. Runs with memory interleaved across sockets
+    (numactl -i all).
     """
     if not Path(f"{graph}.config").is_file():
         raise click.ClickException(f"{graph}.config not found")
     binary = BUILD / app
     if not binary.exists():
         raise click.ClickException(f"{binary} not found; run `build {app}` first")
-    sys.exit(execute([str(binary), "-rounds", str(rounds), graph]))
+    sys.exit(execute(["numactl", "-i", "all", str(binary), "-rounds", str(rounds), graph]))
 
 
 if __name__ == "__main__":

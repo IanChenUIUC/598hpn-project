@@ -1,6 +1,7 @@
 // Weakly connected components with libgrape-lite's
 // examples/analytical_apps/wcc, loaded as run_app loads it for "wcc"
-// (undirected, map partitioner, no rebalancing), printing on worker 0:
+// (undirected, map partitioner, no rebalancing) but with 4 loading threads,
+// printing on worker 0:
 //   load_s <seconds>         reading and partitioning
 //   round <r> <seconds>      one line per timed round, after one untimed warm-up
 //   components <count>
@@ -56,6 +57,7 @@ int main(int argc, char* argv[]) {
     graph_spec.set_rebalance(false, 0);
     graph_spec.partitioner_type = grape::parse_partitioner_type_name("map");
     graph_spec.idxer_type = grape::parse_idxer_type_name("hashmap");
+    graph_spec.load_concurrency = 4;
 
     MPI_Barrier(comm_spec.comm());
     auto start = std::chrono::steady_clock::now();

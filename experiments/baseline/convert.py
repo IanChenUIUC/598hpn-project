@@ -110,7 +110,8 @@ def galois(csr_: str, out: str) -> None:
 @main.command()
 @click.argument("csr_")
 @click.argument("out")
-def grape(csr_: str, out: str) -> None:
+@click.option("-t", "--threads", type=int, default=1, help="Threads for writing OUT.e.")
+def grape(csr_: str, out: str, threads: int) -> None:
     """Write OUT.v, one vertex id per line, and OUT.e, each undirected edge once as
     "u v", from the CSR at prefix CSR_."""
     Path(out).parent.mkdir(parents=True, exist_ok=True)
@@ -119,6 +120,7 @@ def grape(csr_: str, out: str) -> None:
     fmt.convert(
         fmt.GraphDescriptor(f"{csr_}.indices.parquet", fmt.CsrParquet.Read()),
         fmt.GraphDescriptor(out, fmt.CsvEdgelist.Write(sep=" ", header=False)),
+        num_threads=threads,
     )
     Path(f"{out}.csv").rename(f"{out}.e")
 
