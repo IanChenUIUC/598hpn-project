@@ -1,0 +1,175 @@
+@inproceedings{yan2025lci,
+	series = {SC '25},
+	title = {LCI: a Lightweight Communication Interface for Efficient Asynchronous Multithreaded Communication},
+	DOI = {10.1145/3712285.3759881},
+	booktitle = {Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis},
+	publisher = {ACM},
+	author = {Yan, Jiakun and Snir, Marc},
+	year = {2025},
+	month = 11,
+	pages = {1043-1059},
+	collection = {SC '25},
+	tldr = {Experimental results show that LCI significantly outperforms existing communication libraries in various multithreaded scenarios, achieving performance that exceeds the traditional multi-process execution mode and unlocking new possibilities for emerging programming models and applications.},
+}
+
+
+@misc{chandrasekar2024shared,
+	doi = {10.48550/ARXIV.2411.03533},
+	author = {Chandrasekar, Kavitha and Kale, Laxmikant},
+	keywords = {Distributed, Parallel, and Cluster Computing (cs.DC), FOS: Computer and information sciences, FOS: Computer and information sciences},
+	title = {Shared Memory-Aware Latency-Sensitive Message Aggregation for Fine-Grained Communication},
+	publisher = {arXiv},
+	year = {2024},
+	copyright = {Creative Commons Attribution 4.0 International},
+}
+
+
+@inproceedings{steil2023embracing,
+	series = {SC '23},
+	title = {Embracing Irregular Parallelism in HPC with YGM},
+	DOI = {10.1145/3581784.3607103},
+	booktitle = {Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis},
+	publisher = {ACM},
+	author = {Steil, Trevor and Reza, Tahsin and Priest, Benjamin and Pearce, Roger},
+	year = {2023},
+	month = 11,
+	pages = {1-13},
+	collection = {SC '23},
+	tldr = {Compared to similar distributed active message benchmark implementations that do not provide message buffering, YGM is able to achieve over 10x throughput on thousands of cores at a latency cost that can be as small as 2x or as large as 100x, depending on the machine being used.},
+}
+
+
+@inproceedings{dathathri2019gluonasync,
+	title = {Gluon-Async: A Bulk-Asynchronous System for Distributed and Heterogeneous Graph Analytics},
+	DOI = {10.1109/pact.2019.00010},
+	booktitle = {2019 28th International Conference on Parallel Architectures and Compilation Techniques (PACT)},
+	publisher = {IEEE},
+	author = {Dathathri, Roshan and Gill, Gurbinder and Hoang, Loc and Jatala, Vishwesh and Pingali, Keshav and Nandivada, V. Krishna and Dang, Hoang-Vu and Snir, Marc},
+	year = {2019},
+	month = Sept,
+	pages = {15-28},
+}
+
+
+@inproceedings{nelson2014grappa,
+	title = {Grappa: A latency-tolerant runtime for large-scale irregular applications},
+	author = {Nelson, Jacob and Holt, Brandon and Myers, Brandon and Briggs, Preston and Ceze, Luis and Kahan, Simon and Oskin, Mark},
+	booktitle = {International Workshop on Rack-Scale Computing (WRSC w/EuroSys)},
+	year = {2014},
+}
+
+
+@inproceedings{mcsherry2015scalability,
+	title = {Scalability! but at what {COST}?},
+	author = {McSherry, Frank and Isard, Michael and Murray, Derek G},
+	booktitle = {15th Workshop on Hot Topics in Operating Systems (HotOS XV)},
+	year = {2015},
+}
+
+
+@article{dhulipala2021theoretically,
+	title = {Theoretically efficient parallel graph algorithms can be fast and scalable},
+	author = {Dhulipala, Laxman and Blelloch, Guy E and Shun, Julian},
+	journal = {ACM Transactions on Parallel Computing (TOPC)},
+	volume = {8},
+	number = {1},
+	pages = {1--70},
+	year = {2021},
+	publisher = {ACM New York, NY, USA},
+}
+
+
+@article{meng2024survey,
+	title = {A Survey of Distributed Graph Algorithms on Massive Graphs},
+	volume = {57},
+	ISSN = {1557-7341},
+	number = {2},
+	journal = {ACM Computing Surveys},
+	publisher = {Association for Computing Machinery (ACM)},
+	author = {Meng, Lingkai and Shao, Yu and Yuan, Long and Lai, Longbin and Cheng, Peng and Li, Xue and Yu, Wenyuan and Zhang, Wenjie and Lin, Xuemin and Zhou, Jingren},
+	year = {2024},
+	month = 10,
+	pages = {1-39},
+	abstract = {Distributed processing of large-scale graph data has many practical applications and has been widely studied. In recent years, a lot of distributed graph processing frameworks and algorithms have been proposed. While many efforts have been devoted to analyzing these, with most analyzing them based on programming models, less research focuses on understanding their challenges in distributed environments. Applying graph tasks to distributed environments is not easy, often facing numerous challenges through our analysis, including parallelism, load balancing, communication overhead, and bandwidth. In this article, we provide an extensive overview of the current state-of-the-art in this field by outlining the challenges and solutions of distributed graph algorithms. We first conduct a systematic analysis of the inherent challenges in distributed graph processing, followed by presenting an overview of existing general solutions. Subsequently, we survey the challenges highlighted in recent distributed graph processing papers and the strategies adopted to address them. Finally, we discuss the current research trends and identify potential future opportunities.},
+	tldr = {An extensive overview of the current state of the art in distributed graph processing by outlining the challenges and solutions of distributed graph algorithms and presenting an overview of existing general solutions is provided.},
+}
+
+
+@inproceedings{dathathri2018gluon,
+	series = {PLDI '18},
+	title = {Gluon: a communication-optimizing substrate for distributed heterogeneous graph analytics},
+	booktitle = {Proceedings of the 39th ACM SIGPLAN Conference on Programming Language Design and Implementation},
+	publisher = {ACM},
+	author = {Dathathri, Roshan and Gill, Gurbinder and Hoang, Loc and Dang, Hoang-Vu and Brooks, Alex and Dryden, Nikoli and Snir, Marc and Pingali, Keshav},
+	year = {2018},
+	month = 6,
+	pages = {752-768},
+	collection = {PLDI '18},
+	abstract = {This paper introduces a new approach to building distributed-memory graph analytics systems that exploits heterogeneity in processor types (CPU and GPU), partitioning policies, and programming models. The key to this approach is Gluon, a communication-optimizing substrate. Programmers write applications in a shared-memory programming system of their choice and interface these applications with Gluon using a lightweight API. Gluon enables these programs to run on heterogeneous clusters and optimizes communication in a novel way by exploiting structural and temporal invariants of graph partitioning policies. To demonstrate Gluon's ability to support different programming models, we interfaced Gluon with the Galois and Ligra shared-memory graph analytics systems to produce distributed-memory versions of these systems named D-Galois and D-Ligra, respectively. To demonstrate Gluon's ability to support heterogeneous processors, we interfaced Gluon with IrGL, a state-of-the-art single-GPU system for graph analytics, to produce D-IrGL, the first multi-GPU distributed-memory graph analytics system. Our experiments were done on CPU clusters with up to 256 hosts and roughly 70,000 threads and on multi-GPU clusters with up to 64 GPUs. The communication optimizations in Gluon improve end-to-end application execution time by ~2.6x on the average. D-Galois and D-IrGL scale well and are faster than Gemini, the state-of-the-art distributed CPU graph analytics system, by factors of ~3.9x and ~4.9x, respectively, on the average.},
+	tldr = {This paper introduces a new approach to building distributed-memory graph analytics systems that exploits heterogeneity in processor types (CPU and GPU), partitioning policies, and programming models, and Gluon, a communication-optimizing substrate that enables these programs to run on heterogeneous clusters and optimizes communication in a novel way.},
+}
+
+
+@misc{mohammadiporshokooh2026overcoming,
+	author = {Mohammadiporshokooh, Karame and Syskakis, Panagiotis and Lumsdaine, Andrew and Kaiser, Hartmut},
+	keywords = {Distributed, Parallel, and Cluster Computing (cs.DC), FOS: Computer and information sciences, FOS: Computer and information sciences},
+	title = {Overcoming Latency-bound Limitations of Distributed Graph Algorithms using the HPX Runtime System},
+	publisher = {arXiv},
+	year = {2026},
+	copyright = {arXiv.org perpetual, non-exclusive license},
+	abstract = {Graph processing at scale presents many challenges, including the irregular structure of graphs, the latency-bound nature of graph algorithms, and the overhead associated with distributed execution. While existing frameworks such as Spark GraphX and the Parallel Boost Graph Library (PBGL) have introduced abstractions for distributed graph processing, they continue to struggle with inherent issues like load imbalance and synchronization overhead. In this work, we present a distributed library prototype and a distributed implementation of three key graph algorithms - Breadth-First Search (BFS), PageRank, and Triangle Counting, using C++ mechanisms from the NWgraph library and leveraging HPX's distributed containers and asynchronous constructs. These algorithms span the categories of Traversal, centrality, and Pattern matching, and are selected to represent diverse computational characteristics. We evaluate our HPX-based implementations against GraphX, and PBGL, showing that a high-performance runtime such as HPX enables the construction of algorithms that significantly outperform conventional frameworks by exploiting asynchronous execution, latency hiding, and fine-grained parallelism in shared memory. All algorithms in our prototype follow a unified execution model in which local and remote computations are expressed using the same programming abstractions, with asynchrony managed transparently by the runtime. This design explicitly leverages shared-memory parallelism within each locality while overlapping communication and computation across localities, providing a practical foundation for extending this approach to a broader class of distributed graph algorithms.},
+	tldr = {This work presents a distributed library prototype and a distributed implementation of three key graph algorithms - Breadth-First Search (BFS), PageRank, and Triangle Counting - using C++ mechanisms from the NWgraph library and leveraging HPX's distributed containers and asynchronous constructs.},
+}
+
+
+@misc{staudt2014networkit,
+	author = {Staudt, Christian L. and Sazonovs, Aleksejs and Meyerhenke, Henning},
+	keywords = {Social and Information Networks (cs.SI), Distributed, Parallel, and Cluster Computing (cs.DC), Physics and Society (physics.soc-ph), FOS: Computer and information sciences, FOS: Computer and information sciences, FOS: Physical sciences, FOS: Physical sciences},
+	title = {{NetworKit}: A Tool Suite for Large-scale Complex Network Analysis},
+	publisher = {arXiv},
+	year = {2014},
+	copyright = {Creative Commons Attribution 4.0 International},
+}
+
+
+@inproceedings{zhu2016gemini,
+	title = {Gemini: A {Computation-Centric} distributed graph processing system},
+	author = {Zhu, Xiaowei and Chen, Wenguang and Zheng, Weimin and Ma, Xiaosong},
+	booktitle = {12th USENIX symposium on operating systems design and implementation (OSDI 16)},
+	pages = {301--316},
+	year = {2016},
+}
+
+
+@inproceedings{dragojevic2014farm,
+	title = {{FaRM}: Fast remote memory},
+	author = {Dragojevi{\'c}, Aleksandar and Narayanan, Dushyanth and Castro, Miguel and Hodson, Orion},
+	booktitle = {11th USENIX Symposium on Networked Systems Design and Implementation (NSDI 14)},
+	pages = {401--414},
+	year = {2014},
+}
+
+
+@misc{leskovec2014snap,
+	author = {Leskovec, Jure and Krevl, Andrej},
+	title = {{SNAP Datasets}: {Stanford} Large Network Dataset Collection},
+	howpublished = {\url{http://snap.stanford.edu/data}},
+	month = 6,
+	year = {2014},
+}
+
+
+@inproceedings{nguyen2013lightweight,
+	series = {SOSP '13},
+	title = {A lightweight infrastructure for graph analytics},
+	DOI = {10.1145/2517349.2522739},
+	booktitle = {Proceedings of the Twenty-Fourth ACM Symposium on Operating Systems Principles},
+	publisher = {ACM},
+	author = {Nguyen, Donald and Lenharth, Andrew and Pingali, Keshav},
+	year = {2013},
+	month = 11,
+	pages = {456-471},
+	collection = {SOSP '13},
+	abstract = {Several domain-specific languages (DSLs) for parallel graph analytics have been proposed recently. In this paper, we argue that existing DSLs can be implemented on top of a general-purpose infrastructure that (i) supports very fine-grain tasks, (ii) implements autonomous, speculative execution of these tasks, and (iii) allows application-specific control of task scheduling policies. To support this claim, we describe such an implementation called the Galois system. We demonstrate the capabilities of this infrastructure in three ways. First, we implement more sophisticated algorithms for some of the graph analytics problems tackled by previous DSLs and show that end-to-end performance can be improved by orders of magnitude even on power-law graphs, thanks to the better algorithms facilitated by a more general programming model. Second, we show that, even when an algorithm can be expressed in existing DSLs, the implementation of that algorithm in the more general system can be orders of magnitude faster when the input graphs are road networks and similar graphs with high diameter, thanks to more sophisticated scheduling. Third, we implement the APIs of three existing graph DSLs on top of the common infrastructure in a few hundred lines of code and show that even for power-law graphs, the performance of the resulting implementations often exceeds that of the original DSL systems, thanks to the lightweight infrastructure.},
+	tldr = {This paper argues that existing DSLs can be implemented on top of a general-purpose infrastructure that supports very fine-grain tasks, implements autonomous, speculative execution of these tasks, and allows application-specific control of task scheduling policies.},
+}

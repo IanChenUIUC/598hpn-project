@@ -1,0 +1,125 @@
+\documentclass{article}
+
+\usepackage{sty/notes}
+\usepackage{sty/math}
+
+\usepackage{booktabs}
+
+\title{Tulle: A One-Sided RDMA Runtime for Distributed Graph Processing}
+\author{Ian Chen}
+\date{\today}
+
+\usepackage[backend=biber,style=numeric,defernumbers=true]{biblatex}
+\addbibresource{refs.bib}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+% Motivation - what problem are you trying to solve and why?
+Processing and analyzing very large graphs is central to many fields including machine learning, bioinformatics, and analysis of social/web networks.
+Recent work has shown that a single machine available for rent on a typical cloud platform (72 cores and 1TB of memory) can efficiently process graphs with billions of edges \cite{dhulipala2021theoretically}.
+Beyond this scale, or when data is already spread across a cluster, distributed processing is necessary.
+However, graph algorithms have inherent sequential dependencies, skewed workloads, and frequent, high-volume communication \cite{meng2024survey}, so distributed systems are often far less efficient than shared-memory ones, sometimes slower than a single thread \cite{mcsherry2015scalability}.
+
+Existing distributed graph systems take one of two approaches.
+The most common is message passing, typically using MPI, the standard for distributed-memory programming.
+Because each network message is expensive, these systems collect many small updates into large batches and exchange them in globally synchronized rounds \cite{dathathri2018gluon,zhu2016gemini}.
+While this reduces communication overhead, it introduces synchronization overhead, delays dependent updates until the next round, and makes skewed workloads difficult to balance.
+Moreover, it requires restructuring algorithms around these rounds, so algorithms written for a single machine cannot be reused.
+The alternative, distributed shared memory, preserves the familiar programming model by letting programs access memory on other machines as if it were local, but the latency of each remote access has historically made it too slow \cite{nelson2014grappa}.
+
+A recent preprint~\cite{mohammadiporshokooh2026overcoming} combines HPX runtime system, with its distributed containers and asynchronous constructs, to graph processing with NWGraph graph data structures.
+HPX supports asynchronous remote function invocations, sending data to a remote node that executes it once it has all the data.
+It makes use of work-stealing to enable much more fine-grained parallelism than previous systems.
+
+Similarly, Tulle also aggressive uses work-stealing to overlap communication and computation and effectively utilize compute.
+It deviates from existing work in that it uses one-sided RDMA reads for fetching remote graph data to execute data locally.
+We expect this simpler approach to reduce any overhead from scheduling HPX futures.
+
+Therefore, the question we ask is: \emph{can lightweight concurrency effectively hide the latency of fine-grained, irregular graph accesses over one-sided RDMA?}
+
+\section{Initial Experiment}
+
+% Progress made so far
+As an initial experiment, we compared a state-of-the-art distributed-memory graph library (Galois) against a corresponding shared-memory library (GBBS).
+We find that even on a single node, the shared-memory library greatly outperforms the distributed-memory library.
+This illustrates the inefficiency, both algorithmically due to limitations in the programming interface, and in terms of system design, associated with distributed graph processing.
+
+Galois~\cite{nguyen2013lightweight} has both multi-node and multi-core parallelism, using the Gluon~\cite{dathathri2018gluon} for its communication (we use message passing via Open MPI).
+We compare the Galois' label-propagation algorithm for connected components, which is recommended for distributed environments.
+Each node gets the label of the smallest of its neighbors, which will converge to nodes getting the same label iff they are in the same connected component.
+This naturally fits the bulk-parallel model, where communication is batched into rounds (of label propagation).
+GBBS~\cite{dhulipala2021theoretically} is a shared-memory library for graph algorithms.
+In contrast to Galois, it implements a more complex algorithm making use of a sampling approach and then a lock-free union-find implementation.
+Because GBBS is designed for shared memory, it is able to utilize more efficient procedures that do not need to worry about communication costs.
+
+We evaluate the differences between Galois and GBBS on the Friendster social network, with 65 millions nodes and 1.8 billion edges, obtained from the SNAP repository~\cite{leskovec2014snap}.
+We run Galois with both $n=1$ or $n=4$ partitions of the graph, where $n=1$ is essentially the same configuration as GBBS, reporting the minimum time out of three repetitions, with an additional warm-up round, in Table \ref{tab:cc-friendster}.
+Though GBBS and Galois both run on the un-partitioned graph, GBBS is much faster.
+Adding $4$ partitions and using MPI to communicate, even on a shared-memory machine, introduces additional overhead.
+As on a single-machine there is no network latency, we expect these differences to be exacerbated on a distributed environment.
+
+\begin{table}[t]
+    \centering
+    \begin{tabular}{lrrr}
+        \toprule
+                               & GBBS & Galois ($n=1$) & Galois ($n=4$) \\
+        \midrule
+        Min.\ compute time (s) & 0.94 & 7.04           & 11.81          \\
+        \bottomrule
+    \end{tabular}
+    \caption{
+        \textbf{Comparing single-node connected components time on Friendster network}.
+        We compare the GBBS (shared-memory) with Galois (run over MPI) to compute connected components.
+        For Galois, we evaluate both $n=1$ and $n=4$ MPI ranks.
+        All methods use the same number of threads (64).
+    }
+    \label{tab:cc-friendster}
+\end{table}
+
+\section{Implementation and Evaluation Plan}
+
+% Key challenges you need to overcome
+% Solution sketch
+% Implementation and evaluation plan
+
+At this point, I have not started implementation and so the details are not fully fleshed out.
+However, the main challenge will be in ensuring there is enough concurrency to overlap communication and computation.
+This involves two parts: minimizing the latency due to RDMA reads, and minimizing any scheduler overhead when switching tasks.
+One necessary optimization described in the HPX paper~\cite{mohammadiporshokooh2026overcoming} is to have the runtime batch messages transparently, but adaptively so that it does not come at a cost of latency.
+
+For evaluation, I will compare my library to these existing systems for shared/distributed memory.
+Also, I plan to compare to the HPX work, which takes a similar approach for minimizing latency, but a different concurrency/communication model (with remote function invocations).
+I plan to conduct ablation tests such as comparing different communication protocols (e.g. TCP).
+Varying the number of nodes and threads per node, as well as different algorithmic workflows, are also relevant factors.
+
+\section{Future Work}
+
+% Tentative timeline for remaining work.
+
+This progress report was primarily on understanding how to set-up and run experiments in Cloudlab, and understanding the related work in distributed graph libraries.
+From now on, I will focus on building the core of the library.
+
+First is to define the precise graph API that I will support; this will likely be very similar to Ligra for shared-memory processing.
+Then, with this, write a small collection of simple algorithms that I will use throughout the future implementation, e.g. connected components, $k$-core, PageRank.
+I expect this to take a week.
+
+Afterward, I will write the runtime for the library.
+This involves figuring out how to use and set-up the communication, and how to use thread parallelism to hide their latency.
+I plan to get an initial implementation for the second progress report (Nov. 6th).
+
+Finally, the remainder of the work will be running experiments (as described above) and performance tuning.
+This should be plenty to do before the final report on Dec. 4th.
+
+\section{AI Usage}
+
+AI assistance is heavily used for coding assistance, primarily in experimental scripts and locating documentation.
+I (the author) have reviewed all generated code, and have written all text in this manuscript.
+The name Tulle, as a fine textile, was thought of by ChatGPT.
+
+\printbibliography
+
+\end{document}
