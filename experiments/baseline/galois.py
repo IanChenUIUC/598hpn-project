@@ -72,5 +72,35 @@ def run(app: str, graph: str, np_: int, threads: int, rounds: int) -> None:
     sys.exit(execute(cmd, {"GALOIS_DO_NOT_BIND_THREADS": "1"}))
 
 
+@main.command("run-shm")
+@click.argument("app")
+@click.argument("graph", type=click.Path(exists=True, dir_okay=False))
+@click.argument("algo", type=click.Choice(["Afforest", "LabelProp"]))
+@click.option("-t", "--threads", type=int, default=1, help="Threads.")
+@click.option("-r", "--rounds", type=int, default=3, help="Timed rounds after the warm-up.")
+def run_shm(app: str, graph: str, algo: str, threads: int, rounds: int) -> None:
+    """Run shared-memory APP with ALGO on GRAPH, a symmetric graph in Galois's .gr format.
+
+    Runs one unbound process with memory interleaved across sockets, matching `run -n 1`.
+    """
+    binary = BUILD / app
+    if not binary.exists():
+        raise click.ClickException(f"{binary} not found; run `build {app}` first")
+    cmd = [
+        "numactl",
+        "-i",
+        "all",
+        str(binary),
+        graph,
+        "-symmetricGraph",
+        f"-algo={algo}",
+        "-t",
+        str(threads),
+        "-runs",
+        str(rounds),
+    ]
+    sys.exit(execute(cmd, {"GALOIS_DO_NOT_BIND_THREADS": "1"}))
+
+
 if __name__ == "__main__":
     main()

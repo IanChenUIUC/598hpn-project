@@ -33,7 +33,7 @@ pc.defineParameter("datasets", "Mount the inputs and results datasets on node0",
                    portal.ParameterType.BOOLEAN, True)
 pc.defineParameter("task", "Task to run at boot (none for interactive)",
                    portal.ParameterType.STRING, "none",
-                   legalValues=["none", "populate-friendster", "baseline"])
+                   legalValues=["none", "populate-friendster", "baseline", "galois-cc"])
 pc.defineParameter("terminate", "Terminate the experiment when the task finishes",
                    portal.ParameterType.BOOLEAN, False)
 params = pc.bindParameters()

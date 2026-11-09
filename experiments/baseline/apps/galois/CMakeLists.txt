@@ -11,3 +11,6 @@ add_executable(cc cc.cpp)
 target_include_directories(cc PRIVATE
   "${GALOIS}/lonestar/analytics/distributed/connected-components")
 target_link_libraries(cc Galois::shmem LLVMSupport distbench)
+
+add_executable(cc_shm cc_shm.cpp)
+target_link_libraries(cc_shm Galois::shmem LLVMSupport lonestar)

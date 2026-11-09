@@ -8,6 +8,7 @@ apt-get install -y \
     libboost-all-dev llvm-dev libzstd-dev libfmt-dev libnuma-dev \
     openmpi-bin libopenmpi-dev \
     libucx-dev ucx-utils rdma-core ibverbs-utils perftest \
+    libcereal-dev libspdlog-dev libhwloc-dev \
     libgflags-dev libgoogle-glog-dev \
     numactl time tmux htop
 apt-get clean
