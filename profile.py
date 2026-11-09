@@ -27,6 +27,8 @@ pc.defineParameter("image", "Disk image", portal.ParameterType.IMAGE,
                                 "urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU24-64-STD"])
 pc.defineParameter("hardware", "Hardware type (empty for any)", portal.ParameterType.NODETYPE, "")
 pc.defineParameter("nodes", "Number of nodes", portal.ParameterType.INTEGER, 1)
+pc.defineParameter("bandwidth", "LAN bandwidth in Gb/s (with more than one node)",
+                   portal.ParameterType.INTEGER, 100)
 pc.defineParameter("datasets", "Mount the inputs and results datasets on node0",
                    portal.ParameterType.BOOLEAN, True)
 pc.defineParameter("task", "Task to run at boot (none for interactive)",
@@ -48,7 +50,7 @@ for i in range(params.nodes):
 
 if params.nodes > 1:
     lan = request.LAN("lan")
-    lan.bandwidth = 100000000  # kbps; selects the 100Gb ConnectX-5 ports on d6515
+    lan.bandwidth = params.bandwidth * 1000000  # kbps
     for i, node in enumerate(nodes):
         iface = node.addInterface("if%d" % i)
         iface.addAddress(pg.IPv4Address("192.168.1.%d" % (i + 1), "255.255.255.0"))
