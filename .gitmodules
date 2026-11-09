@@ -19,3 +19,9 @@
 [submodule "external/parlaylib"]
 	path = external/parlaylib
 	url = https://github.com/ParAlg/parlaylib
+[submodule "external/ygm"]
+	path = external/ygm
+	url = https://github.com/LLNL/ygm
+[submodule "external/qthreads"]
+	path = external/qthreads
+	url = https://github.com/sandialabs/qthreads
